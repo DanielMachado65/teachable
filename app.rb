@@ -1,41 +1,36 @@
-require 'sinatra'
-require 'mongo'
-require 'json'
-require 'pry'
+# frozen_string_literal: true
+require "sinatra/base"
+require "dotenv/load"
+require "httparty"
+require "json"
+require "oj"
 
-# Establish MongoDB connection
-MONGO_URL = ENV.fetch('MONGO_URL', 'mongodb://localhost:27017/mydb')
-DB = Mongo::Client.new(MONGO_URL)
+require_relative "config/environment"
+require_relative "lib/utils/teachable_client"
+require_relative "lib/repository/course_repo"
+require_relative "lib/repository/enrollment_repo"
+require_relative "lib/repository/user_repo"
+require_relative "lib/service/teachable_service"
 
-# Define the Sinatra application
 class App < Sinatra::Base
-  get '/' do
-    'Sinatra MongoDB API'
-  end
+  set :bind, "0.0.0.0"
 
-  get '/items' do
-    content_type :json
-    docs = DB[:items].find.map { |d| d.merge('_id' => d['_id'].to_s) }
-    docs.to_json
-  end
-
-  post '/items' do
-    content_type :json
-    body = request.body.read
-    halt 400, { error: 'Empty body' }.to_json if body.strip.empty?
-
-    begin
-      data = JSON.parse(body)
-    rescue JSON::ParserError
-      halt 400, { error: 'Invalid JSON' }.to_json
+  helpers do
+    def teachable_client
+      @teachable_client ||= TeachableClient.new(
+        base_url: ENV.fetch("TEACHABLE_API_BASE", "https://developers.teachable.com"),
+        api_key:  ENV.fetch("TEACHABLE_API_KEY")
+      )
     end
 
-    halt 400, { error: 'Expected an array of objects' }.to_json unless data.is_a?(Array)
+    def teachable_service
+      @teachable_service ||= TeachableService.new(client: teachable_client)
+    end
+  end
 
-    result = DB[:items].insert_many(data)
-    status 201
-    { ids: result.inserted_ids.map(&:to_s) }.to_json
+  get "/" do
+    "Sinatra Teachable API (cache Mongo: courses, enrollments, users)"
   end
 end
 
-App.run! if __FILE__ == $0
+require_relative "routes/reports"

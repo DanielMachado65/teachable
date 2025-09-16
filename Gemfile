@@ -1,13 +1,19 @@
 source 'https://rubygems.org'
 
-gem 'mongo'
+ruby '>= 3.1'
+
+gem 'dotenv'
+gem 'httparty'
+gem 'oj'
+gem 'sinatra'
 gem 'puma'
 gem 'rackup'
-gem 'sinatra'
+gem 'mongo'
 
-group :development do
-  gem 'listen'
-  gem 'pry'
+group :development, :test do
   gem 'rerun'
-  gem 'rubocop'
+  gem 'pry'
+  gem 'rack-test'
+  gem 'rspec'
+  gem 'webmock'
 end

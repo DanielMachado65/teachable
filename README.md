@@ -1,11 +1,10 @@
-# Sinatra MongoDB API Template
+# Sinatra API Template
 
-This template provides a minimal setup for building an API with [Sinatra](http://sinatrarb.com/) and MongoDB. It includes Docker configuration so the app and database can be run with a single command.
+This template provides a minimal setup for building an API with [Sinatra](http://sinatrarb.com/). It includes Docker configuration so the app and database can be run with a single command.
 
 ## Features
 
 - Simple Sinatra application structure
-- MongoDB connection using the official Ruby driver
 - Ready to run with Docker and Docker Compose
 
 ## Getting Started

@@ -1,4 +1,4 @@
-FROM ruby:3.2.9-alpine3.21
+FROM ruby:3.2-alpine
 
 RUN apk add --no-cache build-base
 ENV RACK_ENV=development
