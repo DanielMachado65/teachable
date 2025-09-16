@@ -1,0 +1,38 @@
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+    branches:
+      - main
+
+name: Format and Test
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+      - name: Run RuboCop
+        run: bundle exec rubocop
+
+  test:
+    runs-on: ubuntu-latest
+    needs: format
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.2"
+      - name: Install dependencies
+        run: |
+          gem install bundler
+          bundle install
+      - name: Run tests
+        run: bundle exec rspec
